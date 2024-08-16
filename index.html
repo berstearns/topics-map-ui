@@ -1,6 +1,10 @@
 <html>
 <head>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js" integrity="sha512-+Jg3Ynmj9hse704K48H6rBBI3jdNBjReRGBCxUWFfOz3yVurnJFWtAWssDAsGtzWYw89xFWPxShuj2T6E9EOpg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+	Mousetrap.bind('4', function() { alert('4'); });
+</script>
 <script>
 window.state = {
   "UI": {
@@ -484,7 +488,7 @@ window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.st
 </style>
 </head>
 <body>
-	<div id="content">
+   <div id="content">
     <div id="app">
     </div>
   </div>
@@ -691,7 +695,7 @@ window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.st
         rightButtonEl.classList.add('carousel-button', 'right');
         rightButtonEl.innerHTML =  `<p onClick="window.store.dispatch({type: 'DISPLAY_NEXT_TOPICS'})">&#10095;</p>`; // Right arrow
 
-        carouselContainerEl.append(leftButtonEl, rightButtonEl);
+        appEl.append(leftButtonEl, rightButtonEl);
         appEl.append(carouselContainerEl);
       }
     }
