@@ -7,6 +7,9 @@ window.state = {
     "showModal": false,
     "selectedTopicId": null,
     "selectedTaskId": null,
+    "search": null,
+    "displayTopics": null,
+    "maxDisplayTopics": 3,
   },
 	"topics": {
 		"e5551556729859762485": {
@@ -343,7 +346,7 @@ window.state = {
 		}
 	}
 }
-
+window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.state.UI.maxDisplayTopics) 
 
 </script>
 <style>
@@ -437,7 +440,7 @@ window.state = {
     padding: 5px;
     font-size: 16px;
 }
-    /* Carousel container */
+/* Carousel container */
 .carousel-container {
   position: relative;
   width: 100%;
@@ -460,8 +463,7 @@ window.state = {
 /* Carousel navigation buttons */
 .carousel-button {
   position: absolute;
-  top: 50%;
-  transform: translateY(vh);
+  top: 10vh;
   background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   border: none;
@@ -487,15 +489,9 @@ window.state = {
     </div>
   </div>
   <script>
-    function onClickCarrouselLeftButton(carouselWrapperEl) {
-          const currentTransform = getComputedStyle(carouselWrapperEl).transform;
-          const currentTranslateX = currentTransform === 'none' ? 0 : parseFloat(currentTransform.split(',')[4]);
-          carouselWrapperEl.style.transform = `translateX(${Math.max(-((5 * 320) - window.innerWidth + 20), currentTranslateX - 320)}px)`; // Adjust 320 based on topic width + margin
+    function onClickCarrouselLeftButton() {
         } 
-    function onClickCarrouselRightButton(carouselWrapperEl) {
-          const currentTransform = getComputedStyle(carouselWrapperEl).transform;
-          const currentTranslateX = currentTransform === 'none' ? 0 : parseFloat(currentTransform.split(',')[4]);
-          carouselWrapperEl.style.transform = `translateX(${Math.min(0, currentTranslateX + 320)}px)`; // Adjust 320 based on topic width + margin
+    function onClickCarrouselRightButton() {
     }
     function onClickModalGoBack() {
       document.getElementById('app').classList.remove('hide');
@@ -529,8 +525,49 @@ window.state = {
             return {
               ...state
             }
+	  case 'DISPLAY_PREV_TOPICS':
+	    var keys = Object.keys(state.topics)
+	    var curr_display_first_id = state.UI.displayTopics[0]
+	    var curr_display_start_idx = keys.indexOf(curr_display_first_id) 
+	    if(curr_display_start_idx === 0){ 
+	      var new_state = state
+	    }
+	    else{
+	      var new_display_first_idx = curr_display_start_idx-1
+	      var new_display_last_idx = curr_display_start_idx + state.UI.maxDisplayTopics - 1
+	      var newdisplaytopics=keys.slice(new_display_first_idx,new_display_last_idx)
+	      var new_state = {
+		      ...state,
+		      UI: {
+			...state.UI,
+			displayTopics:newdisplaytopics	
+		      }
+	       }
+            }
+   	    return new_state
+	  case 'DISPLAY_NEXT_TOPICS':
+	    var keys = Object.keys(state.topics)
+	    var curr_display_last_id = state.UI.displayTopics[state.UI.displayTopics.length-1]
+	    var curr_display_last_idx = keys.indexOf(curr_display_last_id) 
+	    if(curr_display_last_idx === keys.length - 1 ){ 
+	      var new_state = state
+	    }
+	    else{
+	      var new_display_last_idx = curr_display_last_idx+1
+	      var temp = new_display_last_idx - state.UI.maxDisplayTopics + 1
+	      var new_display_first_idx = temp > 0 ? temp : 0 
+	      var newdisplaytopics=keys.slice(new_display_first_idx,new_display_last_idx+1)
+	      var new_state = {
+		      ...state,
+		      UI: {
+			...state.UI,
+			displayTopics:newdisplaytopics	
+		      }
+	      }
+            }
+   	    return new_state
+		
           case 'GO_TO_TASK':
-            console.log(action.payload);
             var new_state = {
               ...state,
               UI: {
@@ -590,7 +627,7 @@ window.state = {
           <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
         </div>
         `
-          appEl.append(searchBarEl);
+        appEl.append(searchBarEl);
         // Create carousel container
         const carouselContainerEl = document.createElement('div');
         carouselContainerEl.classList.add('carousel-container');
@@ -601,7 +638,7 @@ window.state = {
         carouselWrapperEl.classList.add('carousel-wrapper');
         
         // Add topics to carousel wrapper
-        for (const topicId in state.topics) {
+        for (const topicId of state.UI.displayTopics ) {
           const topicData = state.topics[topicId];
           // topic-column
           const topicColumnEl = document.createElement('div');
@@ -648,11 +685,11 @@ window.state = {
 
         const leftButtonEl = document.createElement('button');
         leftButtonEl.classList.add('carousel-button', 'left');
-        leftButtonEl.innerHTML =  `<p onClick="onClickCarrouselLeftButton(${carouselWrapperEl.id})">&#10094;</p>`; // left arrow
+        leftButtonEl.innerHTML =  `<p onClick="window.store.dispatch({type: 'DISPLAY_PREV_TOPICS'})">&#10094;</p>`; // left arrow
 
         const rightButtonEl = document.createElement('button');
         rightButtonEl.classList.add('carousel-button', 'right');
-        rightButtonEl.innerHTML =  `<p onClick="onClickCarrouselRightButton(${carouselWrapperEl.id})">&#10095;</p>`; // Right arrow
+        rightButtonEl.innerHTML =  `<p onClick="window.store.dispatch({type: 'DISPLAY_NEXT_TOPICS'})">&#10095;</p>`; // Right arrow
 
         carouselContainerEl.append(leftButtonEl, rightButtonEl);
         appEl.append(carouselContainerEl);
