@@ -1,9 +1,30 @@
 <html>
 <head>
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js" integrity="sha512-+Jg3Ynmj9hse704K48H6rBBI3jdNBjReRGBCxUWFfOz3yVurnJFWtAWssDAsGtzWYw89xFWPxShuj2T6E9EOpg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="/public/w3.css">
+<link rel="stylesheet" href="/public/index.css">
+<!-- Import Swiper.js CSS -->
+<link rel="stylesheet" href="/public/swiper-bundle.min.css" />
+
+<script src="/public/tailwind.js"></script>
 <script>
-	Mousetrap.bind('4', function() { alert('4'); });
+tailwind.config = {
+    theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+          }
+        }
+    }
+}
+</script>
+<style type="text/tailwindcss">
+@layer utilities {
+    .content-auto {
+        content-visibility: auto;
+    }
+}
+</style>
+<script src="/public/mousetrap.min.js"></script>
 </script>
 <script>
 window.state = {
@@ -350,142 +371,12 @@ window.state = {
 		}
 	}
 }
+
 window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.state.UI.maxDisplayTopics) 
 
 </script>
-<style>
-.backgroundimg {
-  z-index: -1;
-}
-#content {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 10px;
-}
-
-.topic {
-  border-radius: 15px;
-  background: #ff6f61;
-  width: 300px;
-  height: 40vh;
-  margin-bottom: 20px;
-  padding: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
-  transform-style: preserve-3d;
-}
-
-.topic:hover {
-  background: #ff5a4d;
-  transform: translateZ(20px) scale(1.05);
-  box-shadow: 0 12px 24px 0 rgba(0, 0, 0, 0.3);
-}
-
-.task {
-  margin-top: 10px;
-  margin-left: 20px;
-  border-radius: 15px;
-  background: #ffa500;
-  width: 280px;
-  height: 25vh;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
-  transform-style: preserve-3d;
-}
-
-.task:hover {
-  background: #e69500;
-  transform: translateZ(15px) scale(1.03);
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
-}
-.task.hide {
-	display: none;
-}
-#app.hide {
-  display: none
-}
-
-* {
-  box-sizing: border-box;
-}
-
-/* Create four equal columns that floats next to each other */
-.column {
-  float: left;
-  padding: 10px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-.search-container {
-    display: flex;
-    align-items: center;
-    width: 300px; /* Adjust the width as needed */
-    border: 2px solid #ccc;
-    border-radius: 25px;
-    padding: 5px;
-}
-
-.search-container i {
-    font-size: 20px;
-    color: #333;
-    margin-right: 10px;
-}
-
-.search-container input {
-    border: none;
-    outline: none;
-    width: 100%;
-    padding: 5px;
-    font-size: 16px;
-}
-/* Carousel container */
-.carousel-container {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-}
-
-/* Carousel wrapper */
-.carousel-wrapper {
-  display: flex;
-  transition: transform 0.3s ease-in-out;
-}
-
-/* Topic column styling */
-.column {
-  flex: 0 0 auto; /* Prevent columns from shrinking or growing */
-  width: 300px;   /* Adjust the width of each topic box */
-  margin-right: 20px; /* Space between columns */
-}
-
-/* Carousel navigation buttons */
-.carousel-button {
-  position: absolute;
-  top: 10vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.carousel-button.left {
-  left: 10px;
-}
-
-.carousel-button.right {
-  right: 10px;
-}
-
-</style>
+<!-- Import Swiper.js JavaScript -->
+<script src="/public/swiper-bundle.min.js"></script>
 </head>
 <body>
    <div id="content">
@@ -493,13 +384,10 @@ window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.st
     </div>
   </div>
   <script>
-    function onClickCarrouselLeftButton() {
-        } 
-    function onClickCarrouselRightButton() {
-    }
     function onClickModalGoBack() {
       document.getElementById('app').classList.remove('hide');
-      document.getElementById('app-modal').remove()
+      var modalEl = document.getElementById('app-modal')
+      modalEl.parentElement.removeChild(modalEl)
       window.store.dispatch({
             type: '',
             payload: {
@@ -520,7 +408,7 @@ window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.st
     }
   </script>
   <script type="module">
-    import * as Redux from 'https://unpkg.com/redux@latest/dist/redux.browser.mjs'
+    import * as Redux from '/public/redux.browser.mjs'
 
     function reducer(state, action) {
         switch (action.type) {
@@ -529,48 +417,6 @@ window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.st
             return {
               ...state
             }
-	  case 'DISPLAY_PREV_TOPICS':
-	    var keys = Object.keys(state.topics)
-	    var curr_display_first_id = state.UI.displayTopics[0]
-	    var curr_display_start_idx = keys.indexOf(curr_display_first_id) 
-	    if(curr_display_start_idx === 0){ 
-	      var new_state = state
-	    }
-	    else{
-	      var new_display_first_idx = curr_display_start_idx-1
-	      var new_display_last_idx = curr_display_start_idx + state.UI.maxDisplayTopics - 1
-	      var newdisplaytopics=keys.slice(new_display_first_idx,new_display_last_idx)
-	      var new_state = {
-		      ...state,
-		      UI: {
-			...state.UI,
-			displayTopics:newdisplaytopics	
-		      }
-	       }
-            }
-   	    return new_state
-	  case 'DISPLAY_NEXT_TOPICS':
-	    var keys = Object.keys(state.topics)
-	    var curr_display_last_id = state.UI.displayTopics[state.UI.displayTopics.length-1]
-	    var curr_display_last_idx = keys.indexOf(curr_display_last_id) 
-	    if(curr_display_last_idx === keys.length - 1 ){ 
-	      var new_state = state
-	    }
-	    else{
-	      var new_display_last_idx = curr_display_last_idx+1
-	      var temp = new_display_last_idx - state.UI.maxDisplayTopics + 1
-	      var new_display_first_idx = temp > 0 ? temp : 0 
-	      var newdisplaytopics=keys.slice(new_display_first_idx,new_display_last_idx+1)
-	      var new_state = {
-		      ...state,
-		      UI: {
-			...state.UI,
-			displayTopics:newdisplaytopics	
-		      }
-	      }
-            }
-   	    return new_state
-		
           case 'GO_TO_TASK':
             var new_state = {
               ...state,
@@ -606,107 +452,138 @@ window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.st
 
     window.store = Redux.createStore(reducer, window.state);
 
-  function render(state, action) {
-    switch (action.type) {
-      case 'RENDER_MODAL': {
-        // Existing modal rendering code
-        break;
-      }
-      default: {
-        const appEl = document.getElementById('app');
-        if (appEl.childElementCount > 0) {
-          while (appEl.firstChild) {
-            appEl.removeChild(appEl.firstChild);
-          }
+    function render(state, action) {
+        switch (action.type) {
+            case 'RENDER_MODAL': {
+                // Existing modal rendering code
+                break;
+            }
+            default: {
+                const appEl = document.getElementById('app');
+                if (appEl.childElementCount > 0) {
+                    while (appEl.firstChild) {
+                        appEl.removeChild(appEl.firstChild);
+                    }
+                }
+
+                const searchBarEl = document.createElement('div');
+                searchBarEl.innerHTML = `
+                <div style="width:50%;margin:10px auto;">
+                    <div class="search-container">
+                        <i>?</i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                  <label for="vehicle1">Show hidden tasks</label>
+                  <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+                </div>
+                `
+                appEl.append(searchBarEl);
+                
+                // Create Swiper container
+                const swiperContainerEl = document.createElement('div');
+                swiperContainerEl.classList.add('swiper-container');
+
+                // Create Swiper wrapper
+                const swiperWrapperEl = document.createElement('div');
+                swiperWrapperEl.classList.add('swiper-wrapper');
+                
+                // Add topics to Swiper wrapper
+                for (const topicId in state.topics) {
+                    const topicData = state.topics[topicId];
+
+                    const topicSlideEl = document.createElement('div');
+                    topicSlideEl.classList.add('swiper-slide');
+
+                    const topicColumnEl = document.createElement('div');
+                    topicColumnEl.classList.add('column');
+                    topicColumnEl.id = `topic-column-${topicId}`;
+
+                    const topicBoxEl = document.createElement('div');
+                    topicBoxEl.classList.add('topic');
+                    topicBoxEl.id = `topic-box-${topicId}`;
+                    topicBoxEl.innerHTML = `
+                        <p style="text-align:center;">${topicData.name}</p>
+                        <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+                          <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicData.completed}%;font-size:.8vw;">${topicData.completed}% Completed</div>
+                        </div>
+                        <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+                          <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicData.score}%;font-size:.8vw;">${topicData.score} Score</div>
+                        </div>
+                        <button class="seetask" onclick="window.store.dispatch({type: 'TOGGLE_TASKS', payload: { topicId: '${topicId}' }})" style="float:right;margin-left:5px;"> ${ topicData.UI.showTasks ? topicData.UI.HiddeMessage : topicData.UI.SeeMessage } </button>
+                    `;
+
+                    topicColumnEl.append(topicBoxEl);
+
+                    for (const taskId in topicData.tasks) {
+                        const taskData = topicData.tasks[taskId];
+                        const taskEl = document.createElement('div');
+                        taskEl.classList.add('task');
+                        topicData.UI.showTasks ? taskEl.classList.remove("hide") : taskEl.classList.add("hide")
+                        taskEl.id = `task-${taskId}`;
+                        taskEl.innerHTML = `
+                            <p style="text-align:center;">${taskData.name}</p>
+                            <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+                              <div class="w3-container w3-blue w3-round-xlarge" style="width:${taskData.score}%;font-size:.8vw;">${taskData.score} Score</div>
+                            </div>
+                            <button class="seetask" onClick="onClickTaskSeeTaskButton('${topicId}', '${taskId}')"  style="float:right;margin-left:5px;"> ${taskData.UI.GoMessage}</button>
+                        `;
+                        topicColumnEl.append(taskEl);
+                    }
+
+                    topicSlideEl.append(topicColumnEl);
+                    swiperWrapperEl.append(topicSlideEl);
+                }
+
+                swiperContainerEl.append(swiperWrapperEl);
+
+                // Add Swiper pagination and navigation if needed
+                const swiperPaginationEl = document.createElement('div');
+                swiperPaginationEl.classList.add('swiper-pagination');
+
+                const swiperButtonPrevEl = document.createElement('div');
+                swiperButtonPrevEl.classList.add('swiper-button-prev');
+
+                const swiperButtonNextEl = document.createElement('div');
+                swiperButtonNextEl.classList.add('swiper-button-next');
+
+                appEl.append(swiperContainerEl, swiperPaginationEl, swiperButtonPrevEl, swiperButtonNextEl);
+
+                // Initialize Swiper
+                window.swiper = new Swiper('.swiper-container', {
+ 		    slidesPerView: 3,
+ 		    spaceBetween: 1,
+                    loop: false,
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                });
+            }
         }
-
-        const searchBarEl = document.createElement('div');
-        searchBarEl.innerHTML = `
-        <div style="width:50%;margin:10px auto;">
-            <div class="search-container">
-                <i>?</i> <!-- You can replace this with an actual icon using a library like Font Awesome -->
-                <input type="text" placeholder="Search...">
-            </div>
-          <label for="vehicle1">Show hidden tasks</label>
-          <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
-        </div>
-        `
-        appEl.append(searchBarEl);
-        // Create carousel container
-        const carouselContainerEl = document.createElement('div');
-        carouselContainerEl.classList.add('carousel-container');
-
-        // Create carousel wrapper
-        const carouselWrapperEl = document.createElement('div');
-	carouselWrapperEl.setAttribute("id","carouselWrapper")
-        carouselWrapperEl.classList.add('carousel-wrapper');
-        
-        // Add topics to carousel wrapper
-        for (const topicId of state.UI.displayTopics ) {
-          const topicData = state.topics[topicId];
-          // topic-column
-          const topicColumnEl = document.createElement('div');
-          topicColumnEl.classList.add('column');
-          topicColumnEl.id = `topic-column-${topicId}`;
-
-          // topic-box
-          const topicBoxEl = document.createElement('div');
-          topicBoxEl.classList.add('topic');
-          topicBoxEl.id = `topic-box-${topicId}`;
-          topicBoxEl.innerHTML = `
-            <p style="text-align:center;">${topicData.name}</p>
-            <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
-              <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicData.completed}%;font-size:.8vw;">${topicData.completed}% Completed</div>
-            </div>
-            <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
-              <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicData.score}%;font-size:.8vw;">${topicData.score} Score</div>
-            </div>
-            <button class="seetask" onclick="window.store.dispatch({type: 'TOGGLE_TASKS', payload: { topicId: '${topicId}' }})" style="float:right;margin-left:5px;"> ${ topicData.UI.showTasks ? topicData.UI.HiddeMessage : topicData.UI.SeeMessage } </button>
-          `;
-          
-          topicColumnEl.append(topicBoxEl);
-          
-          for (const taskId in topicData.tasks) {
-            const taskData = topicData.tasks[taskId];
-            const taskEl = document.createElement('div');
-            taskEl.classList.add('task');
-            topicData.UI.showTasks ? taskEl.classList.remove("hide") : taskEl.classList.add("hide")  
-            taskEl.id = `task-${taskId}`;
-            taskEl.innerHTML = `
-              <p style="text-align:center;">${taskData.name}</p>
-              <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
-                <div class="w3-container w3-blue w3-round-xlarge" style="width:${taskData.score}%;font-size:.8vw;">${taskData.score} Score</div>
-              </div>
-              <button class="seetask" onClick="onClickTaskSeeTaskButton('${topicId}', '${taskId}')"  style="float:right;margin-left:5px;"> ${taskData.UI.GoMessage}</button>
-            `;
-            topicColumnEl.append(taskEl);
-          }
-
-          carouselWrapperEl.append(topicColumnEl);
-        }
-
-        carouselContainerEl.append(carouselWrapperEl);
-
-        const leftButtonEl = document.createElement('button');
-        leftButtonEl.classList.add('carousel-button', 'left');
-        leftButtonEl.innerHTML =  `<p onClick="window.store.dispatch({type: 'DISPLAY_PREV_TOPICS'})">&#10094;</p>`; // left arrow
-
-        const rightButtonEl = document.createElement('button');
-        rightButtonEl.classList.add('carousel-button', 'right');
-        rightButtonEl.innerHTML =  `<p onClick="window.store.dispatch({type: 'DISPLAY_NEXT_TOPICS'})">&#10095;</p>`; // Right arrow
-
-        appEl.append(leftButtonEl, rightButtonEl);
-        appEl.append(carouselContainerEl);
-      }
     }
-  }
+
     render(window.store.getState(), { type: 'INIT' });
     store.subscribe(() => {
-      const state = window.store.getState();
-      const action = state.UI.showModal ? { type: 'RENDER_MODAL' } : { type: 'RENDER_ALL' };
-      render(state, action);
+        const state = window.store.getState();
+        const action = state.UI.showModal ? { type: 'RENDER_MODAL' } : { type: 'RENDER_ALL' };
+        render(state, action);
     });
   </script>
-</body>
+  <script>
+    Mousetrap.bind('4', function() { alert('4'); });
+    // Bind arrow keys to swiper navigation using Mousetrap.js
+    Mousetrap.bind('right', function() {
+	window.swiper.slideNext(); // Go to the next slide
+    });
+    
+    Mousetrap.bind('left', function() {
+	window.swiper.slidePrev(); // Go to the previous slide
+    });
+  </script>
+	</body>
 </html>
 
