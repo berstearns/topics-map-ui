@@ -1,2 +1,4 @@
 .vim
 node_modules
+webserver/venv
+webserver/__pycache__

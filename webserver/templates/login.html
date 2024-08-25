@@ -1,0 +1,151 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/public/swiper-bundle.min.css" />
+  <script src="/public/tailwind.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+    }
+  </style>
+  <script src="/public/mousetrap.min.js"></script>
+  <script>
+    window.state = {
+      UI: {
+        showModal: false,
+        loggedIn: false,
+        loginError: null,
+      },
+      data: {
+        keypass: null,
+      }
+    };
+
+    function onLoginSubmit() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.store.dispatch({type: 'LOGIN_SUCCESS', payload: data});
+        } else {
+          window.store.dispatch({type: 'LOGIN_ERROR', payload: data.message});
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        window.store.dispatch({type: 'LOGIN_ERROR', payload: 'An error occurred. Please try again.'});
+      });
+    }
+  </script>
+</head>
+<body>
+  <div id="content">
+    <div id="app"></div>
+  </div>
+  <script type="module">
+    import * as Redux from '/public/redux.browser.mjs';
+
+    function reducer(state, action) {
+      switch (action.type) {
+        case 'LOGIN_SUCCESS':
+          return {
+            ...state,
+            UI: {
+              ...state.UI,
+              loggedIn: true,
+              loginError: null,
+            },
+	    data: {
+	    	...state.data,
+		keypass: action.payload.keypass
+	    }
+          };
+        case 'LOGIN_ERROR':
+          return {
+            ...state,
+            UI: {
+              ...state.UI,
+              loginError: action.payload,
+            }
+          };
+        default:
+          return state;
+      }
+    }
+
+    window.store = Redux.createStore(reducer, window.state);
+
+    function render(state, action) {
+      const appEl = document.getElementById('app');
+      appEl.innerHTML = '';
+
+      if (state.UI.loggedIn) {
+        appEl.innerHTML = `
+          <div class="text-center mt-10">
+            <h1 class="text-4xl font-bold">Welcome back!</h1>
+          </div>
+        `;
+      } else {
+        appEl.innerHTML = `
+          <div class="max-w-md mx-auto mt-10 p-8 border border-gray-300 rounded-lg shadow-lg bg-white">
+            <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
+            <div class="mb-4">
+              <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+              <input id="username" name="username" type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+            </div>
+            <div class="mb-4">
+              <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+              <input id="password" name="password" type="password" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+            </div>
+            ${state.UI.loginError ? `<div class="text-red-500 text-sm mb-4">${state.UI.loginError}</div>` : ''}
+            <div class="flex justify-center">
+              <button onClick="onLoginSubmit()" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-lg transform transition-transform duration-300 active:translate-y-1 active:shadow-none">
+                Login
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    window.store.subscribe(() => {
+      const state = window.store.getState();
+      const action = 1 ? { type: 'RENDER_MODAL' } : { type: 'RENDER_ALL' };
+      if(state.data.keypass){
+	//window.history.pushState(state.data, '', '/homepage')
+	window.navigation.navigate(`/homepage/${state.data.keypass}`, {})
+      }
+      else{
+	render(state, action);
+      }
+    });
+
+    render(window.store.getState());
+  </script>
+</body>
+</html>
