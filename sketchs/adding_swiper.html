@@ -1,0 +1,591 @@
+<html>
+<head>
+<link rel="stylesheet" href="/public/w3.css">
+<link rel="stylesheet" href="/public/index.css">
+<!-- Import Swiper.js CSS -->
+<link rel="stylesheet" href="/public/swiper-bundle.min.css" />
+
+<script src="/public/tailwind.js"></script>
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+          }
+        }
+    }
+}
+</script>
+<style type="text/tailwindcss">
+@layer utilities {
+    .content-auto {
+        content-visibility: auto;
+    }
+}
+</style>
+<script src="/public/mousetrap.min.js"></script>
+</script>
+<script>
+window.state = {
+  "UI": {
+    "showModal": false,
+    "selectedTopicId": null,
+    "selectedTaskId": null,
+    "search": null,
+    "displayTopics": null,
+    "maxDisplayTopics": 3,
+  },
+	"topics": {
+		"e5551556729859762485": {
+      "UI":{
+        "showTasks": false,
+        "SeeMessage": "see tasks ↓",
+        "HiddeMessage": "hidde tasks ↑",
+        "AddTaskMessage": "add task +",
+      },
+			"completed": 50,
+			"score": 72,
+			"name": "What did you do today?",
+			"tasks": {
+				"1730789376726802856": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe your morning routine",
+					"score": 82
+				},
+				"1827391674184217122": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe another daily routine",
+					"score": 47
+				},
+				"1827391674184217123": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What did you have for breakfast?",
+					"score": 60
+				},
+				"1827391674184217124": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "How did you commute to work?",
+					"score": 75
+				},
+				"1827391674184217125": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a challenge you faced today",
+					"score": 55
+				},
+				"1827391674184217126": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What did you have for lunch?",
+					"score": 68
+				},
+				"1827391674184217127": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe your evening routine",
+					"score": 80
+				},
+				"1827391674184217128": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What did you have for dinner?",
+					"score": 74
+				},
+				"1827391674184217129": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What time did you go to bed?",
+					"score": 83
+				},
+				"1827391674184217130": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a moment that made you happy today",
+					"score": 90
+				}
+			}
+		},
+		"a7845123401278956432": {
+      "UI":{
+        "showTasks": false,
+        "SeeMessage": "see tasks ↓",
+        "HiddeMessage": "hidde tasks ↑",
+        "AddTaskMessage": "add task +",
+      },
+			"completed": 70,
+			"score": 85,
+			"name": "Favorite Hobbies",
+			"tasks": {
+				"1930845623482348956": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe your favorite hobby",
+					"score": 90
+				},
+				"1857389461283476122": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a hobby you want to learn",
+					"score": 75
+				},
+				"1857389461283476123": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "How did you get started with your hobby?",
+					"score": 88
+				},
+				"1857389461283476124": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What do you love most about your hobby?",
+					"score": 95
+				},
+				"1857389461283476125": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a memorable moment related to your hobby",
+					"score": 80
+				},
+				"1857389461283476126": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "How often do you practice your hobby?",
+					"score": 70
+				},
+				"1857389461283476127": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Who do you share your hobby with?",
+					"score": 85
+				},
+				"1857389461283476128": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What is a challenge you face with your hobby?",
+					"score": 77
+				},
+				"1857389461283476129": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a goal you have for your hobby",
+					"score": 92
+				},
+				"1857389461283476130": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What equipment or tools do you use for your hobby?",
+					"score": 65
+				}
+			}
+		},
+		"b6758493021874956123": {
+      "UI":{
+        "showTasks": false,
+        "SeeMessage": "see tasks ↓",
+        "HiddeMessage": "hidde tasks ↑",
+        "AddTaskMessage": "add task +",
+      },
+			"completed": 60,
+			"score": 78,
+			"name": "Travel Experiences",
+			"tasks": {
+				"1976432863124985607": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe your favorite travel destination",
+					"score": 88
+				},
+				"1867349124873246122": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a place you want to visit",
+					"score": 68
+				},
+				"1867349124873246123": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What was your first travel experience?",
+					"score": 85
+				},
+				"1867349124873246124": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What is the most memorable trip you've had?",
+					"score": 90
+				},
+				"1867349124873246125": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a travel mishap you experienced",
+					"score": 60
+				},
+				"1867349124873246126": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What kind of traveler are you?",
+					"score": 78
+				},
+				"1867349124873246127": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What do you love most about traveling?",
+					"score": 95
+				},
+				"1867349124873246128": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Who is your favorite travel companion?",
+					"score": 83
+				},
+				"1867349124873246129": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a cultural experience you had while traveling",
+					"score": 87
+				},
+				"1867349124873246130": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What is the best food you’ve eaten while traveling?",
+					"score": 80
+				}
+			}
+		},
+		"c8923746512378945621": {
+      "UI":{
+        "showTasks": false,
+        "SeeMessage": "see tasks ↓",
+        "HiddeMessage": "hidde tasks ↑",
+        "AddTaskMessage": "add task +",
+      },
+			"completed": 80,
+			"score": 92,
+			"name": "Professional Goals",
+			"tasks": {
+				"1983475623482398765": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe your current job",
+					"score": 95
+				},
+				"1873948561239476123": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe your dream job",
+					"score": 89
+				},
+				"1873948561239476124": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What skills are you working on to achieve your goals?",
+					"score": 90
+				},
+				"1873948561239476125": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Who inspires you professionally?",
+					"score": 85
+				},
+				"1873948561239476126": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a professional challenge you overcame",
+					"score": 75
+				},
+				"1873948561239476127": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What are your short-term professional goals?",
+					"score": 82
+				},
+				"1873948561239476128": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What are your long-term professional goals?",
+					"score": 88
+				},
+				"1873948561239476129": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "Describe a project you are proud of",
+					"score": 92
+				},
+				"1873948561239476130": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "What is your approach to networking?",
+					"score": 70
+				},
+				"1873948561239476131": { 
+          "UI": {
+            "GoMessage": "go to task →",
+          },
+					"name": "How do you balance work and personal life?",
+					"score": 78
+				}
+			}
+		}
+	}
+}
+
+window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.state.UI.maxDisplayTopics) 
+
+</script>
+<!-- Import Swiper.js JavaScript -->
+<script src="/public/swiper-bundle.min.js"></script>
+</head>
+<body>
+   <div id="content">
+    <div id="app">
+    </div>
+  </div>
+  <script>
+    function onClickModalGoBack() {
+      document.getElementById('app').classList.remove('hide');
+      var modalEl = document.getElementById('app-modal')
+      modalEl.parentElement.removeChild(modalEl)
+      window.store.dispatch({
+            type: '',
+            payload: {
+                      "showModal": false,
+                      "selectedTopicId": null,
+                      "selectedTaskId": null,
+                     }
+      })
+    }
+    function onClickTaskSeeTaskButton (topicId, taskId){
+      document.getElementById('app').classList.add('hide');
+      window.store.dispatch({type: 'GO_TO_TASK',
+                             payload: { 
+                               topicId: `${topicId}`,
+                               taskId: `${taskId}`, 
+                             }
+                           })
+    }
+  </script>
+  <script type="module">
+    import * as Redux from '/public/redux.browser.mjs'
+
+    function reducer(state, action) {
+        switch (action.type) {
+          case 'ADD_TASK':
+            const newTask = action.payload.task;
+            return {
+              ...state
+            }
+          case 'GO_TO_TASK':
+            var new_state = {
+              ...state,
+              UI: {
+                ...state.UI,
+                "showModal": true,
+                "selectedTopicId": action.payload.topicId,
+                "selectedTaskId": action.payload.taskId
+              }
+            }
+            return new_state;
+          case 'TOGGLE_TASKS':
+            var new_state = {
+              ...state,
+              topics: {
+                ...state.topics,
+                [action.payload.topicId]: {
+                  ...state.topics[action.payload.topicId],
+                  UI: {
+                    ...state.topics[action.payload.topicId].UI,
+                    showTasks: !state.topics[action.payload.topicId].UI.showTasks
+                  }
+                }
+              }
+            };
+            console.log(new_state)
+            console.log(action.payload.topicId)
+            return new_state; 
+          default:
+            return state
+        }
+    }
+
+    window.store = Redux.createStore(reducer, window.state);
+
+    function render(state, action) {
+        switch (action.type) {
+            case 'RENDER_MODAL': {
+                // Existing modal rendering code
+                break;
+            }
+            default: {
+                const appEl = document.getElementById('app');
+                if (appEl.childElementCount > 0) {
+                    while (appEl.firstChild) {
+                        appEl.removeChild(appEl.firstChild);
+                    }
+                }
+
+                const searchBarEl = document.createElement('div');
+		searchBarEl.innerHTML = `
+		    <div class="w-1/2 mx-auto my-2">
+			<div class="flex items-center w-full border-2 border-gray-300 rounded-full px-3 py-2">
+			    <span class="text-gray-500 mr-2">?</span>
+			    <input type="text" placeholder="Search..." class="w-full outline-none">
+			</div>
+			<div class="mt-2">
+			    <label for="showHiddenTasks" class="mr-2">Show hidden tasks</label>
+			    <input type="checkbox" id="showHiddenTasks" name="showHiddenTasks" value="true">
+			</div>
+		    </div>
+		`;
+                appEl.append(searchBarEl);
+                
+                // Create Swiper container
+                const swiperContainerEl = document.createElement('div');
+                swiperContainerEl.classList.add('swiper-container');
+
+                // Create Swiper wrapper
+                const swiperWrapperEl = document.createElement('div');
+                swiperWrapperEl.classList.add('swiper-wrapper');
+                
+                // Add topics to Swiper wrapper
+                for (const topicId in state.topics) {
+                    const topicData = state.topics[topicId];
+
+                    const topicSlideEl = document.createElement('div');
+                    topicSlideEl.classList.add('swiper-slide');
+
+                    const topicColumnEl = document.createElement('div');
+                    topicColumnEl.classList.add('column');
+                    topicColumnEl.id = `topic-column-${topicId}`;
+
+                    const topicBoxEl = document.createElement('div');
+                    topicBoxEl.classList.add('topic');
+                    topicBoxEl.id = `topic-box-${topicId}`;
+                    topicBoxEl.innerHTML = `
+                        <p style="text-align:center;">${topicData.name}</p>
+                        <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+                          <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicData.completed}%;font-size:.8vw;">${topicData.completed}% Completed</div>
+                        </div>
+                        <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+                          <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicData.score}%;font-size:.8vw;">${topicData.score} Score</div>
+                        </div>
+                        <button class="seetask" onclick="window.store.dispatch({type: 'TOGGLE_TASKS', payload: { topicId: '${topicId}' }})" style="float:right;margin-left:5px;"> ${ topicData.UI.showTasks ? topicData.UI.HiddeMessage : topicData.UI.SeeMessage } </button>
+                    `;
+
+                    topicColumnEl.append(topicBoxEl);
+
+                    for (const taskId in topicData.tasks) {
+                        const taskData = topicData.tasks[taskId];
+                        const taskEl = document.createElement('div');
+                        taskEl.classList.add('task');
+                        topicData.UI.showTasks ? taskEl.classList.remove("hide") : taskEl.classList.add("hide")
+                        taskEl.id = `task-${taskId}`;
+                        taskEl.innerHTML = `
+                            <p style="text-align:center;">${taskData.name}</p>
+                            <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+                              <div class="w3-container w3-blue w3-round-xlarge" style="width:${taskData.score}%;font-size:.8vw;">${taskData.score} Score</div>
+                            </div>
+                            <button class="seetask" onClick="onClickTaskSeeTaskButton('${topicId}', '${taskId}')"  style="float:right;margin-left:5px;"> ${taskData.UI.GoMessage}</button>
+                        `;
+                        topicColumnEl.append(taskEl);
+                    }
+
+                    topicSlideEl.append(topicColumnEl);
+                    swiperWrapperEl.append(topicSlideEl);
+                }
+
+                swiperContainerEl.append(swiperWrapperEl);
+
+                // Add Swiper pagination and navigation if needed
+                const swiperPaginationEl = document.createElement('div');
+                swiperPaginationEl.classList.add('swiper-pagination');
+
+                const swiperButtonPrevEl = document.createElement('div');
+                swiperButtonPrevEl.classList.add('swiper-button-prev');
+
+                const swiperButtonNextEl = document.createElement('div');
+                swiperButtonNextEl.classList.add('swiper-button-next');
+
+                appEl.append(swiperContainerEl, swiperPaginationEl, swiperButtonPrevEl, swiperButtonNextEl);
+
+                // Initialize Swiper
+                window.swiper = new Swiper('.swiper-container', {
+ 		    slidesPerView: 3,
+ 		    spaceBetween: 1,
+                    loop: false,
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                });
+            }
+        }
+    }
+
+    render(window.store.getState(), { type: 'INIT' });
+    store.subscribe(() => {
+        const state = window.store.getState();
+        const action = state.UI.showModal ? { type: 'RENDER_MODAL' } : { type: 'RENDER_ALL' };
+        render(state, action);
+    });
+  </script>
+  <script>
+    Mousetrap.bind('4', function() { alert('4'); });
+    // Bind arrow keys to swiper navigation using Mousetrap.js
+    Mousetrap.bind('right', function() {
+	window.swiper.slideNext(); // Go to the next slide
+    });
+    
+    Mousetrap.bind('left', function() {
+	window.swiper.slidePrev(); // Go to the previous slide
+    });
+  </script>
+	</body>
+</html>
+

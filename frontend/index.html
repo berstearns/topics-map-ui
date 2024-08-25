@@ -1,0 +1,456 @@
+<html>
+<head>
+<!-- Import Swiper.js CSS -->
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/public/swiper-bundle.min.css" />
+
+<script src="/public/tailwind.js"></script>
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+          }
+        }
+    }
+}
+</script>
+<style type="text/tailwindcss">
+@layer utilities {
+    .content-auto {
+        content-visibility: auto;
+    }
+}
+</style>
+<script src="/public/mousetrap.min.js"></script>
+
+<script>
+{% block javascript %}
+	window.state = JSON.parse({{ state | tojson }})
+{% endblock %}
+
+window.state.UI.displayTopics=Object.keys(window.state.topics).slice(0,window.state.UI.maxDisplayTopics) 
+
+</script>
+
+<!-- Import Swiper.js JavaScript -->
+<script src="/public/swiper-bundle.min.js"></script>
+</head>
+<body>
+   <div id="content">
+    <div id="app">
+    </div>
+  </div>
+  <script>
+    function onClickSubmitTaskButton(topicId, taskId) {
+      const text = document.getElementById('task-response').value;
+    
+      fetch('/submit_task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topicId: topicId,
+          taskId: taskId,
+          text: text,
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Handle the error, possibly by showing an error message to the user
+      });
+    }
+
+    function onClickModalGoBack() {
+      var appEl = document.getElementById('app').classList.remove('invisible');
+      var modalEl = document.getElementById('app-modal')
+      modalEl.parentElement.removeChild(modalEl)
+      window.history.pushState(null, null, "/")
+      window.store.dispatch({ type: 'CLOSE_TASK_MODAL' })
+    }
+    function onClickTaskSeeTaskButton (topicId, taskId){
+      var viewEl = document.getElementById('app')
+      viewEl.classList.add('invisible');
+      window.history.pushState(null, null, "/task/123")
+      window.store.dispatch({type: 'GO_TO_TASK',
+                             payload: { 
+                               topicId: `${topicId}`,
+                               taskId: `${taskId}`, 
+                             }
+                           })
+    }
+  </script>
+  <script type="module">
+    import * as Redux from '/public/redux.browser.mjs'
+
+    function reducer(state, action) {
+        switch (action.type) {
+          case 'SLIDE_NEXT':
+	    const n_topics = Object.keys(state.topics).length
+            return {
+                ...state,
+                UI: {
+                    ...state.UI,
+		    global: {
+                    ...state.UI.global,
+		    slideIdx: state.UI.global.slideIdx === n_topics - 1 ? n_topics -1 : state.UI.global.slideIdx + 1  
+		    }
+                }
+            };
+          case 'SLIDE_PREV':
+            return {
+                ...state,
+                UI: {
+                    ...state.UI,
+		    global: {
+                    ...state.UI.global,
+		    slideIdx: state.UI.global.slideIdx - 1 > 0 ? state.UI.global.slideIdx - 1 : 0 
+		    }
+                }
+            };
+          case 'CLOSE_TASK_MODAL':
+            return {
+                ...state,
+                UI: {
+                    ...state.UI,
+		    global: {
+			...state.UI.global,
+			showModal: false,
+			selectedTopicId: null,
+			selectedTaskId: null
+		    }
+                }
+            };
+          case 'GO_TO_TASK':
+            var new_state = {
+              ...state,
+              UI: {
+                ...state.UI,
+		global: {
+			...state.UI.global,
+			"showModal": true,
+			"selectedTopicId": action.payload.topicId,
+			"selectedTaskId": action.payload.taskId
+		}
+              }
+            }
+            return new_state;
+          case 'TOGGLE_TASKS':
+            var new_state = {
+              ...state,
+	      UI:{
+	      	...state.UI,
+		topics: {
+		  ...state.UI.topics,
+		  [action.payload.topicId]: {
+		      ...state.UI.topics[action.payload.topicId],
+		      showTasks: !state.UI.topics[action.payload.topicId].showTasks
+		  }
+		}
+	      }
+            };
+            console.log(new_state)
+            console.log(action.payload.topicId)
+            return new_state; 
+          default:
+            return state
+        }
+    }
+
+    window.store = Redux.createStore(reducer, window.state);
+
+    function render(state, action) {
+        switch (action.type) {
+            case 'RENDER_MODAL': {
+		    const modalEl = document.createElement('div');
+		    modalEl.id = 'app-modal';
+		    modalEl.classList.add('fixed', 'inset-0', 'bg-gray-600', 'bg-opacity-50', 'overflow-y-auto', 'h-full', 'w-full', 'flex', 'items-center', 'justify-center');
+
+		    const selectedTopic = state.topics[state.UI.global.selectedTopicId];
+		    const selectedTask = selectedTopic.tasks[state.UI.global.selectedTaskId];
+		    const previousResponses = selectedTask.previousResponses || ["dsadsa das", "daafs 1241gs"]; // Assuming an array of previous responses exists
+
+		    modalEl.innerHTML = `
+		    <div class="bg-white p-8 rounded-2xl shadow-2xl w-11/12 max-w-2xl transform transition-all duration-300 ease-in-out hover:scale-105 border-4 border-blue-200">
+			<div class="flex justify-between items-center mb-6 border-b-2 border-gray-200 pb-4">
+			    <h2 class="text-3xl font-extrabold text-gray-800 font-serif">${selectedTask.name}</h2>
+			    <button onClick="onClickModalGoBack()" class="text-gray-600 hover:text-red-500 transition duration-300">
+				<svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+				    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+				</svg>
+			    </button>
+			</div>
+			<div class="mb-8">
+			    <h3 class="text-xl font-bold text-gray-700 mb-3">Task Description:</h3>
+			    <p class="text-gray-600 text-lg leading-relaxed">This is where the task description would go. You can add more details about the task here.</p>
+			</div>
+			<div>
+			    <h3 class="text-xl font-bold text-gray-700 mb-3">Your Response:</h3>
+			    <div class="relative">
+				<textarea 
+				    id="task-response"
+				    class="w-full h-64 p-4 border-2 border-blue-300 rounded-lg focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 ease-in-out text-gray-700 text-lg leading-relaxed resize-none"
+				    placeholder="Type your response here..."
+				></textarea>
+				<div class="absolute bottom-4 right-4 text-gray-400">
+				    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+				    </svg>
+				</div>
+			    </div>
+			</div>
+			<div class="mt-8 flex justify-end">
+			    <button 
+				onClick="onClickSubmitTaskButton('${state.UI.global.selectedTopicId}', '${state.UI.global.selectedTaskId}')"
+				class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-lg transform transition-transform duration-300 active:translate-y-1 active:shadow-none border-b-4 border-blue-700"
+			    >
+				Submit Task
+			    </button>
+			</div>
+			<div class="mb-8">
+			    <h3 class="text-xl font-bold text-gray-700 mb-3">Previous Responses:</h3>
+				<div class="space-y-4">
+				  <!-- Response Item -->
+				  <div class="group">
+				    <button
+				      class="w-full text-left bg-gray-200 rounded-lg p-4 border-4 border-gray-300 shadow-lg transition-transform transform hover:-translate-y-1 hover:shadow-2xl"
+				      onclick="toggleResponse('response1')"
+				    >
+				      <span class="font-bold text-gray-700">Previous Response 1</span>
+				      <span class="float-right text-gray-500 group-hover:text-gray-700 transition-colors">+</span>
+				    </button>
+				    <div id="response1" class="hidden mt-2 p-4 bg-white border-l-4 border-gray-300 shadow-inner rounded-lg">
+				      I woke up early and went for a run.
+				    </div>
+				  </div>
+
+				  <!-- Response Item -->
+				  <div class="group">
+				    <button
+				      class="w-full text-left bg-gray-200 rounded-lg p-4 border-4 border-gray-300 shadow-lg transition-transform transform hover:-translate-y-1 hover:shadow-2xl"
+				      onclick="toggleResponse('response2')"
+				    >
+				      <span class="font-bold text-gray-700">Previous Response 2</span>
+				      <span class="float-right text-gray-500 group-hover:text-gray-700 transition-colors">+</span>
+				    </button>
+				    <div id="response2" class="hidden mt-2 p-4 bg-white border-l-4 border-gray-300 shadow-inner rounded-lg">
+				      Had a cup of coffee and read the news.
+				    </div>
+				  </div>
+				</div>
+			</div>
+		    </div>
+		    `;
+
+		    document.body.appendChild(modalEl);
+
+		    break;
+
+
+
+
+            }
+            default: {
+                const appEl = document.getElementById('app');
+                if (appEl.childElementCount > 0) {
+                    while (appEl.firstChild) {
+                        appEl.removeChild(appEl.firstChild);
+                    }
+                }
+
+                const searchBarEl = document.createElement('div');
+		searchBarEl.innerHTML = `
+		    <h1> Hi ${state.user.username} </h1>
+		    <div class="w-1/2 mx-auto my-2">
+			<div class="flex items-center w-full border-2 border-gray-300 rounded-full px-3 py-2">
+			    <span class="text-gray-500 mr-2">?</span>
+			    <input type="text" placeholder="Search..." class="w-full outline-none">
+			</div>
+			<div class="mt-2">
+			    <label for="showHiddenTasks" class="mr-2">Show hidden tasks</label>
+			    <input type="checkbox" id="showHiddenTasks" name="showHiddenTasks" value="true">
+			</div>
+		    </div>
+		`;
+                appEl.append(searchBarEl);
+                
+                // Create Swiper container
+                const swiperContainerEl = document.createElement('div');
+                swiperContainerEl.classList.add('swiper-container');
+
+                // Create Swiper wrapper
+                const swiperWrapperEl = document.createElement('div');
+                swiperWrapperEl.classList.add('swiper-wrapper');
+                
+                // Add topics to Swiper wrapper
+                for (const topicId in state.topics) {
+                    const topicData = state.topics[topicId];
+		    const topicViewData = state.UI.topics[topicId]; 
+
+                    const topicSlideEl = document.createElement('div');
+                    topicSlideEl.classList.add('swiper-slide');
+
+                    const topicColumnEl = document.createElement('div');
+                    topicColumnEl.classList.add('column');
+                    topicColumnEl.id = `topic-column-${topicId}`;
+
+                    const topicBoxEl = document.createElement('div');
+                    topicBoxEl.classList.add('topic', "bg-green-300");
+                    topicBoxEl.id = `topic-box-${topicId}`;
+
+		    topicBoxEl.classList.add(
+		        'topic',
+		        'bg-gradient-to-br',
+		        'from-purple-500',
+		        'to-indigo-500',
+		        'rounded-xl',
+		        'p-6',
+		        'mb-4',
+		        'shadow-lg',
+		        'transform',
+		        'transition',
+		        'duration-300',
+		        'ease-in-out',
+		        'hover:scale-105',
+		        'hover:rotate-1',
+		        'hover:from-pink-500',
+		        'hover:to-orange-500',
+		        'hover:shadow-xl',
+		        'cursor-pointer'
+		    );
+
+		    topicBoxEl.innerHTML = `
+		        <p class="text-center mb-4 font-bold text-xl text-white">${topicData.name}</p>
+		        <div class="w-4/5 mx-auto my-3 bg-white bg-opacity-30 rounded-full">
+		          <div class="bg-white text-xs leading-none py-1 text-center text-indigo-700 rounded-full font-semibold" style="width: ${topicData.completed}%">${topicData.completed}% Completed</div>
+		        </div>
+		        <div class="w-4/5 mx-auto my-3 bg-white bg-opacity-30 rounded-full">
+		          <div class="bg-white text-xs leading-none py-1 text-center text-indigo-700 rounded-full font-semibold" style="width: ${topicData.score}%">${topicData.score} Score</div>
+		        </div>
+		        <button class="mt-4 w-full px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-opacity-90 transition duration-300 font-semibold transform hover:scale-105" onclick="window.store.dispatch({type: 'TOGGLE_TASKS', payload: { topicId: '${topicId}' }})">
+		    	${topicViewData.showTasks ? state.UI.global.HiddeTopicMessage : state.UI.global.SeeTopicMessage }
+		        </button>
+		    `;
+                    topicColumnEl.append(topicBoxEl);
+
+                    for (const taskId in topicData.tasks) {
+			    const taskData = topicData.tasks[taskId];
+			    const taskBoxEl = document.createElement('div');
+			    taskBoxEl.id = `task-${taskId}`;
+			    taskBoxEl.classList.add(
+				'task',
+				'bg-gradient-to-br',
+				'from-teal-400',
+				'to-cyan-500',
+				'rounded-xl',
+				'p-5',
+				'mb-3',
+				'shadow-md',
+				'transform',
+				'transition',
+				'duration-300',
+				'ease-in-out',
+				'hover:scale-102',
+				'hover:rotate-1',
+				'hover:from-green-400',
+				'hover:to-emerald-500',
+				'hover:shadow-lg',
+				'cursor-pointer'
+			    );
+			    
+			    topicViewData.showTasks ? taskBoxEl.classList.remove("invisible") : taskBoxEl.classList.add("invisible");
+
+			    taskBoxEl.innerHTML = `
+				<p class="text-center mb-3 font-semibold text-lg text-white">${taskData.name}</p>
+				<div class="w-4/5 mx-auto my-2 bg-white bg-opacity-30 rounded-full">
+				  <div class="bg-white text-xs leading-none py-1 text-center text-teal-700 rounded-full font-semibold" style="width: ${taskData.score}%">${taskData.score} Score</div>
+				</div>
+				<button class="mt-3 w-full px-3 py-2 bg-white text-teal-600 rounded-lg hover:bg-opacity-90 transition duration-300 font-semibold transform hover:scale-105" onClick="onClickTaskSeeTaskButton('${topicId}', '${taskId}')">
+				    ${state.UI.global.GoToTaskMessage}
+				</button>
+			    `;
+			    topicColumnEl.append(taskBoxEl);
+                    }
+
+                    topicSlideEl.append(topicColumnEl);
+                    swiperWrapperEl.append(topicSlideEl);
+                }
+
+                swiperContainerEl.append(swiperWrapperEl);
+
+                // Add Swiper pagination and navigation if needed
+                const swiperPaginationEl = document.createElement('div');
+                swiperPaginationEl.classList.add('swiper-pagination');
+
+                const swiperButtonPrevEl = document.createElement('div');
+                swiperButtonPrevEl.classList.add('swiper-button-prev');
+
+                const swiperButtonNextEl = document.createElement('div');
+                swiperButtonNextEl.classList.add('swiper-button-next');
+
+                appEl.append(swiperContainerEl, swiperPaginationEl, swiperButtonPrevEl, swiperButtonNextEl);
+
+                // Initialize Swiper
+                window.swiper = new Swiper('.swiper-container', {
+ 		    slidesPerView: 3,
+ 		    spaceBetween: 1,
+		    initialSlide: state.UI.global.slideIdx,
+                    loop: false,
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+		  breakpoints: {
+		    // when window width is >= 320px
+		    640: {
+		      slidesPerView: 1,
+		      spaceBetween: 20
+		    },
+		    // when window width is >= 480px
+		    1000: {
+		      slidesPerView: 2,
+		      spaceBetween: 20
+		    },
+		    // when window width is >= 640px
+		    1500: {
+		      slidesPerView: 3,
+		      spaceBetween: 20
+		    }
+		  }
+                });
+            }
+        }
+    }
+
+    render(window.store.getState(), { type: 'INIT' });
+    store.subscribe(() => {
+        const state = window.store.getState();
+        const action = state.UI.global.showModal ? { type: 'RENDER_MODAL' } : { type: 'RENDER_ALL' };
+        render(state, action);
+    });
+  </script>
+  <script>
+    Mousetrap.bind('4', function() { alert('4'); });
+    // Bind arrow keys to swiper navigation using Mousetrap.js
+    Mousetrap.bind('right', function() {
+      window.store.dispatch({ type: 'SLIDE_NEXT' })
+      window.swiper.slideNext(); // Go to the next slide
+    });
+    
+    Mousetrap.bind('left', function() {
+      window.store.dispatch({ type: 'SLIDE_PREV' })
+      window.swiper.slidePrev(); // Go to the previous slide
+    });
+  </script>
+</body>
+</html>

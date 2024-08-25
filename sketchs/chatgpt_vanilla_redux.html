@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Redux basic example</title>
+    <script>
+      state = {
+        "counter": 0,
+        "search_query": "",
+        "topics": {
+          "food": {
+            "name": "food",
+            "tasks": {
+              "tell your favorite food": {
+                "name": "tell your favorite food",
+                "UI": {
+                  "hidde": false
+                }
+              },
+              "tell your favorite recipe": {
+                "name": "tell your favorite recipe",
+                "UI": {
+                  "hidde": false
+                }
+              }
+            }
+          }
+        }
+      }
+  </script>
+  </head>
+  <body>
+    <div id="app">
+    </div>
+    <script type="module">
+      import * as Redux from 'https://unpkg.com/redux@latest/dist/redux.browser.mjs'
+
+      function reducer(state, action) {
+        switch (action.type) {
+          case 'INCREMENT':
+            return {
+              ...state,
+              counter: state.counter + 1
+            }
+          case 'DECREMENT':
+            return {
+              ...state,
+              counter: state.counter - 1
+            }
+          case 'ADD_TASK':
+            const newTask = action.payload.task;
+            return {
+              ...state,
+              topics: {
+                ...state.topics,
+                food: {
+                  ...state.topics.food,
+                  tasks: {
+                    ...state.topics.food.tasks,
+                    [newTask.name]: newTask
+                  }
+                }
+              }
+            }
+          default:
+            return state
+        }
+      }
+
+      const store = Redux.createStore(reducer, window.state);
+
+      function render(state, action) {
+        switch (action.type) {
+          case 'INCREMENT':
+          case 'DECREMENT': {
+            const counterEl = document.getElementById('counter');
+            counterEl.innerText = `${state.counter} times`;
+            break;
+          }
+          case 'ADD_TASK': {
+            const topicEl = document.getElementById('topic-food');
+            topicEl.innerHTML = ''; // Clear existing tasks
+
+            const topicData = state.topics.food;
+            for (const taskId in topicData.tasks) {
+              const taskData = topicData.tasks[taskId];
+              const taskEl = document.createElement('div');
+              taskEl.innerText = taskData.name;
+              topicEl.append(taskEl);
+            }
+
+            // Re-add buttons
+            addTopicButtons(topicEl);
+            break;
+          }
+          default: {
+            const appEl = document.getElementById('app');
+            appEl.innerHTML = ''; // Clear existing content
+
+            const counterEl = document.createElement('div');
+            counterEl.id = 'counter';
+            counterEl.innerText = `${state.counter} times`;
+            appEl.append(counterEl);
+
+            for (const topicId in state.topics) {
+              const topicData = state.topics[topicId];
+              const topicEl = document.createElement('div');
+              topicEl.id = `topic-${topicId}`;
+
+              const titleEl = document.createElement('div');
+              titleEl.innerText = topicData.name;
+              topicEl.append(titleEl);
+
+              for (const taskId in topicData.tasks) {
+                const taskData = topicData.tasks[taskId];
+                const taskEl = document.createElement('div');
+                taskEl.innerText = taskData.name;
+                topicEl.append(taskEl);
+              }
+
+              addTopicButtons(topicEl);
+              appEl.append(topicEl);
+            }
+          }
+        }
+      }
+
+      function addTopicButtons(topicEl) {
+        const addTaskButton = document.createElement('button');
+        addTaskButton.innerText = "add a task";
+        addTaskButton.addEventListener('click', function () {
+          store.dispatch({
+            type: 'ADD_TASK',
+            payload: {
+              task: {
+                name: "Banana is healthy"
+              }
+            }
+          });
+        });
+
+        const incrementButton = document.createElement('button');
+        incrementButton.innerText = "increment";
+        incrementButton.addEventListener('click', function () {
+          store.dispatch({ type: 'INCREMENT' });
+        });
+
+        const decrementButton = document.createElement('button');
+        decrementButton.innerText = "decrement";
+        decrementButton.addEventListener('click', function () {
+          store.dispatch({ type: 'DECREMENT' });
+        });
+
+        topicEl.append(addTaskButton);
+        topicEl.append(incrementButton);
+        topicEl.append(decrementButton);
+      }
+
+      render(store.getState(), { type: 'INIT' });
+      store.subscribe(() => {
+        const state = store.getState();
+        const action = { type: 'RENDER' }; // Dummy action to indicate re-render
+        render(state, action);
+      });
+    </script>
+  </body>
+</html>

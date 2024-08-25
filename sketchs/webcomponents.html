@@ -1,0 +1,81 @@
+
+    class SearchBar extends HTMLElement {
+      connectedCallback() {
+        this.innerHTML = `
+          <div style="width:50%;margin:10px auto;">
+            <div class="search-container">
+              <i>?</i>
+              <input type="text" placeholder="Search...">
+            </div>
+            <label for="showTasks">Show hidden tasks</label>
+            <input type="checkbox" id="showTasks" name="showTasks" value="ShowTasks">
+          </div>
+        `;
+      }
+    }
+
+    class TopicCarousel extends HTMLElement {
+      connectedCallback() {
+        const state = window.store.getState();
+        this.innerHTML = `
+          <div class="carousel-container">
+            <button class="carousel-button left" onclick="onClickCarrouselLeftButton()">&#10094;</button>
+            <div id="carouselWrapper" class="carousel-wrapper">
+              ${state.UI.displayTopics.map(topicId => {
+                const topic = state.topics[topicId];
+                return `
+                  <div class="column" id="topic-column-${topicId}">
+                    <topic-box id="topic-box-${topicId}" topic-id="${topicId}" topic-name="${topic.name}" topic-completed="${topic.completed}" topic-score="${topic.score}"></topic-box>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+            <button class="carousel-button right" onclick="onClickCarrouselRightButton()">&#10095;</button>
+          </div>
+        `;
+      }
+    }
+
+    class TopicBox extends HTMLElement {
+      static get observedAttributes() {
+        return ['topic-id', 'topic-name', 'topic-completed', 'topic-score'];
+      }
+
+      connectedCallback() {
+        this.render();
+      }
+
+      attributeChangedCallback() {
+        this.render();
+      }
+
+      render() {
+        const topicId = this.getAttribute('topic-id');
+        const topicName = this.getAttribute('topic-name');
+        const topicCompleted = this.getAttribute('topic-completed');
+        const topicScore = this.getAttribute('topic-score');
+
+        this.innerHTML = `
+          <div class="topic">
+            <p style="text-align:center;">${topicName}</p>
+            <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+              <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicCompleted}%;font-size:.8vw;">
+                ${topicCompleted}% Completed
+              </div>
+            </div>
+            <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+              <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicScore}%;font-size:.8vw;">
+                ${topicScore} Score
+              </div>
+            </div>
+            <button class="seetask" onclick="onClickTaskSeeTaskButton('${topicId}', null)">
+              See tasks ↓
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    window.customElements.define('search-bar', SearchBar);
+    window.customElements.define('topic-carousel', TopicCarousel);
+    window.customElements.define('topic-box', TopicBox);

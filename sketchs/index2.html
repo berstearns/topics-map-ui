@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    .backgroundimg {
+      z-index: -1;
+    }
+    #content {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .topic {
+      border-radius: 15px;
+      background: #ff6f61;
+      width: 300px;
+      height: 40vh;
+      margin-bottom: 20px;
+      padding: 10px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+      transform-style: preserve-3d;
+    }
+
+    .topic:hover {
+      background: #ff5a4d;
+      transform: translateZ(20px) scale(1.05);
+      box-shadow: 0 12px 24px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .task {
+      margin-top: 10px;
+      margin-left: 20px;
+      border-radius: 15px;
+      background: #ffa500;
+      width: 280px;
+      height: 25vh;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+      transform-style: preserve-3d;
+    }
+
+    .task:hover {
+      background: #e69500;
+      transform: translateZ(15px) scale(1.03);
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
+    }
+    .task.hide {
+      display: none;
+    }
+    #app.hide {
+      display: none
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Create four equal columns that floats next to each other */
+    .column {
+      float: left;
+      padding: 10px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+    .search-container {
+      display: flex;
+      align-items: center;
+      width: 300px; /* Adjust the width as needed */
+      border: 2px solid #ccc;
+      border-radius: 25px;
+      padding: 5px;
+    }
+
+    .search-container i {
+      font-size: 20px;
+      color: #333;
+      margin-right: 10px;
+    }
+
+    .search-container input {
+      border: none;
+      outline: none;
+      width: 100%;
+      padding: 5px;
+      font-size: 16px;
+    }
+
+    /* Carousel container */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* Carousel wrapper */
+    .carousel-wrapper {
+      display: flex;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    /* Topic column styling */
+    .column {
+      flex: 0 0 auto; /* Prevent columns from shrinking or growing */
+      width: 300px;   /* Adjust the width of each topic box */
+      margin-right: 20px; /* Space between columns */
+    }
+
+    /* Carousel navigation buttons */
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .carousel-button.left {
+      left: 10px;
+    }
+
+    .carousel-button.right {
+      right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="content">
+    <div id="app"></div>
+  </div>
+  <script>
+    function onClickModalGoBack() {
+      document.getElementById('app').classList.remove('hide');
+      document.getElementById('app-modal').remove();
+      window.store.dispatch({
+        type: '',
+        payload: {
+          "showModal": false,
+          "selectedTopicId": null,
+          "selectedTaskId": null,
+        }
+      });
+    }
+    function onClickTaskSeeTaskButton(topicId, taskId) {
+      document.getElementById('app').classList.add('hide');
+      window.store.dispatch({
+        type: 'GO_TO_TASK',
+        payload: {
+          topicId: `${topicId}`,
+          taskId: `${taskId}`,
+        }
+      });
+    }
+  </script>
+  <script type="module">
+    import * as Redux from 'https://unpkg.com/redux@latest/dist/redux.browser.mjs'
+
+    function reducer(state, action) {
+      switch (action.type) {
+        case 'ADD_TASK':
+          const newTask = action.payload.task;
+          return {
+            ...state
+          }
+        case 'GO_TO_TASK':
+          console.log(action.payload);
+          return {
+            ...state,
+            UI: {
+              ...state.UI,
+              "showModal": true,
+              "selectedTopicId": action.payload.topicId,
+              "selectedTaskId": action.payload.taskId
+            }
+          };
+        case 'TOGGLE_TASKS':
+          return {
+            ...state,
+            topics: {
+              ...state.topics,
+              [action.payload.topicId]: {
+                ...state.topics[action.payload.topicId],
+                UI: {
+                  ...state.topics[action.payload.topicId].UI,
+                  showTasks: !state.topics[action.payload.topicId].UI.showTasks
+                }
+              }
+            }
+          };
+        default:
+          return state
+      }
+    }
+
+    window.store = Redux.createStore(reducer, window.state);
+
+    function render(state, action) {
+      switch (action.type) {
+        case 'RENDER_MODAL': {
+          // Existing modal rendering code
+          break;
+        }
+        default: {
+          const appEl = document.getElementById('app');
+          if (appEl.childElementCount > 0) {
+            while (appEl.firstChild) {
+              appEl.removeChild(appEl.firstChild);
+            }
+          }
+
+          const searchBarEl = document.createElement('div');
+          searchBarEl.innerHTML = `
+            <div style="width:50%;margin:10px auto;">
+              <div class="search-container">
+                <i>?</i>
+                <input type="text" placeholder="Search...">
+              </div>
+              <label for="vehicle1">Show hidden tasks</label>
+              <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+            </div>
+          `;
+          appEl.append(searchBarEl);
+
+          // Create carousel container
+          const carouselContainerEl = document.createElement('div');
+          carouselContainerEl.classList.add('carousel-container');
+
+          // Create carousel wrapper
+          const carouselWrapperEl = document.createElement('div');
+          carouselWrapperEl.classList.add('carousel-wrapper');
+
+          // Add topics to carousel wrapper
+          for (const topicId in state.topics) {
+            const topicData = state.topics[topicId];
+            // topic-column
+            const topicColumnEl = document.createElement('div');
+            topicColumnEl.classList.add('column');
+            topicColumnEl.id = `topic-column-${topicId}`;
+
+            // topic-box
+            const topicBoxEl = document.createElement('div');
+            topicBoxEl.classList.add('topic');
+            topicBoxEl.id = `topic-box-${topicId}`;
+            topicBoxEl.innerHTML = `
+              <p style="text-align:center;">${topicData.name}</p>
+              <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+                <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicData.completed}%;font-size:.8vw;">${topicData.completed}% Completed</div>
+              </div>
+              <div style="width:80%;margin:10px auto;" class="w3-light-grey w3-round-xlarge">
+                <div class="w3-container w3-blue w3-round-xlarge" style="width:${topicData.score}%;font-size:.8vw;">${topicData.score} Score</div>
+              </div>
+              <button class="seetask" onclick="window.store.dispatch({type: 'TOGGLE_TASKS', payload: { topicId: '${topicId}' }})" style="float:right;margin-left:5px;"> ${ topicData.UI.showTasks ? topicData.UI.HiddeTasksText : topicData.UI.ShowTasksText } </button>
+              <button class="seetask" onclick="onClickTaskSeeTaskButton('${topicId}', '')">See Task</button>
+            `;
+            topicColumnEl.append(topicBoxEl);
+
+            // Add tasks to topic-box
+            if (topicData.UI.showTasks) {
+              for (const taskId in topicData.tasks) {
+                const taskData = topicData.tasks[taskId];
+                const taskBoxEl = document.createElement('div');
+                taskBoxEl.classList.add('task');
+                taskBoxEl.id = `task-box-${taskId}`;
+                taskBoxEl.innerHTML = `
+                  <p style="text-align:center;">${taskData.name}</p>
+                  <button class="seetask" onclick="onClickTaskSeeTaskButton('${topicId}', '${taskId}')">See Task</button>
+                `;
+                topicBoxEl.append(taskBoxEl);
+              }
+            }
+
+            carouselWrapperEl.append(topicColumnEl);
+          }
+
+          carouselContainerEl.append(carouselWrapperEl);
+
+          // Add carousel buttons
+          const leftButtonEl = document.createElement('button');
+          leftButtonEl.classList.add('carousel-button', 'left');
+          leftButtonEl.innerHTML = '&lt;';
+          leftButtonEl.onclick = () => {
+            const width = document.querySelector('.column').offsetWidth + 20; // width + margin
+            const currentTransform = getComputedStyle(carouselWrapperEl).transform;
+            const currentTranslateX = currentTransform === 'none' ? 0 : parseFloat(currentTransform.split(',')[4]);
+            carouselWrapperEl.style.transform = `translateX(${Math.min(0, currentTranslateX + width)}px)`;
+          };
+
+          const rightButtonEl = document.createElement('button');
+          rightButtonEl.classList.add('carousel-button', 'right');
+          rightButtonEl.innerHTML = '&gt;';
+          rightButtonEl.onclick = () => {
+            const width = document.querySelector('.column').offsetWidth + 20; // width + margin
+            const currentTransform = getComputedStyle(carouselWrapperEl).transform;
+            const currentTranslateX = currentTransform === 'none' ? 0 : parseFloat(currentTransform.split(',')[4]);
+            const maxTranslateX = - (carouselWrapperEl.scrollWidth - carouselContainerEl.clientWidth);
+            carouselWrapperEl.style.transform = `translateX(${Math.max(maxTranslateX, currentTranslateX - width)}px)`;
+          };
+
+          carouselContainerEl.append(leftButtonEl, rightButtonEl);
+          appEl.append(carouselContainerEl);
+        }
+      }
+    }
+
+    // Initial render
+    render(window.state, { type: '' });
+
+    // Subscribe to store updates
+    window.store.subscribe(() => {
+      render(window.store.getState());
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swiper.js with Mousetrap.js</title>
+
+    <!-- Include Swiper.js CSS from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .swiper-container {
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: visible;
+            position: relative;
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .model-card {
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; /* Important for dropdown positioning */
+            cursor: pointer;
+        }
+
+        .model-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .model-card img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .model-card h3 {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        .model-card p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .dropdown {
+            display: none;
+            position: fixed; /* Use fixed to ensure it is always on top */
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 9999; /* Ensure it appears on top */
+            width: 200px;
+        }
+
+        .dropdown li {
+            list-style: none;
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dropdown li:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="model-card" onclick="toggleDropdown(this)">
+                    <img src="https://via.placeholder.com/150?text=Model+1" alt="Model 1">
+                    <h3>Model 1</h3>
+                    <p>Description for Model 1.</p>
+                    <ul class="dropdown">
+                        <li>Option 1</li>
+                        <li>Option 2</li>
+                        <li>Option 3</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="model-card" onclick="toggleDropdown(this)">
+                    <img src="https://via.placeholder.com/150?text=Model+2" alt="Model 2">
+                    <h3>Model 2</h3>
+                    <p>Description for Model 2.</p>
+                    <ul class="dropdown">
+                        <li>Option 1</li>
+                        <li>Option 2</li>
+                        <li>Option 3</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="model-card" onclick="toggleDropdown(this)">
+                    <img src="https://via.placeholder.com/150?text=Model+3" alt="Model 3">
+                    <h3>Model 3</h3>
+                    <p>Description for Model 3.</p>
+                    <ul class="dropdown">
+                        <li>Option 1</li>
+                        <li>Option 2</li>
+                        <li>Option 3</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Additional model cards -->
+            <div class="swiper-slide">
+                <div class="model-card" onclick="toggleDropdown(this)">
+                    <img src="https://via.placeholder.com/150?text=Model+4" alt="Model 4">
+                    <h3>Model 4</h3>
+                    <p>Description for Model 4.</p>
+                    <ul class="dropdown">
+                        <li>Option 1</li>
+                        <li>Option 2</li>
+                        <li>Option 3</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="model-card" onclick="toggleDropdown(this)">
+                    <img src="https://via.placeholder.com/150?text=Model+5" alt="Model 5">
+                    <h3>Model 5</h3>
+                    <p>Description for Model 5.</p>
+                    <ul class="dropdown">
+                        <li>Option 1</li>
+                        <li>Option 2</li>
+                        <li>Option 3</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Continue for other models -->
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+
+    <!-- Include Swiper.js JavaScript from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+    <!-- Include Mousetrap.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mousetrap@1.6.5/mousetrap.min.js"></script>
+
+    <script>
+        // Initialize Swiper.js with specific options
+        const swiper = new Swiper('.swiper-container', {
+            slidesPerView: 3, // Display 3 slides at a time
+            spaceBetween: 20, // Space between slides in pixels
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+
+        function toggleDropdown(card) {
+            const dropdown = card.querySelector('.dropdown');
+            const cardRect = card.getBoundingClientRect();
+
+            // Set the position of the dropdown relative to the viewport
+            dropdown.style.top = `${cardRect.bottom + window.scrollY}px`;
+            dropdown.style.left = `${cardRect.left + window.scrollX}px`;
+
+            // Hide other open dropdowns
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                if (dropdown !== card.querySelector('.dropdown')) {
+                    dropdown.style.display = 'none';
+                }
+            });
+
+            // Toggle the visibility of the dropdown
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Optional: Close dropdown if clicking outside of it
+        document.addEventListener('click', function(event) {
+            const isClickInside = event.target.closest('.model-card');
+            if (!isClickInside) {
+                document.querySelectorAll('.dropdown').forEach(dropdown => {
+                    dropdown.style.display = 'none';
+                });
+            }
+        });
+
+        // Bind arrow keys to swiper navigation using Mousetrap.js
+        Mousetrap.bind('right', function() {
+            swiper.slideNext(); // Go to the next slide
+        });
+
+        Mousetrap.bind('left', function() {
+            swiper.slidePrev(); // Go to the previous slide
+        });
+    </script>
+
+</body>
+</html>
+
