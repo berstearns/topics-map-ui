@@ -1,3 +1,3 @@
 from create_app_instance import create_app
 app = create_app()
-app.run(port=8001, debug=True)
+app.run(host="0.0.0.0", port=80, debug=True)

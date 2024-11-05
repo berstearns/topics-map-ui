@@ -2,3 +2,4 @@
 node_modules
 webserver/venv
 webserver/__pycache__
+venv
